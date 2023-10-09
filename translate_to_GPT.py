@@ -1,6 +1,7 @@
 import os
 import json
 import googletrans
+import time
 from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
@@ -9,7 +10,7 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-open_ai_key = "s"
+open_ai_key = "0"
 
 llmGPT = OpenAI(openai_api_key=open_ai_key, model_name= "gpt-3.5-turbo")
 
@@ -171,7 +172,11 @@ def my_form_post():
     prompt = PromptTemplate(template=template2, input_variables=["text"])
     llm_chain2 = LLMChain(prompt=prompt, llm=llmGPT)
     print ("2nd LLM call")
+    t1 = time.time()
     english_response = llm_chain2.run(text="Take a deep breath")
+    t2 = time.time()
+    diff1 = t2-t1
+
     print (english_response)
     english_response = str(english_response)
 
@@ -190,15 +195,17 @@ def my_form_post():
     template3 =  request.form['text'] + "{text}"
     prompt = PromptTemplate(template=template3, input_variables=["text"])
     llm_chain = LLMChain(prompt=prompt, llm=llmGPT)
+    t3 = time.time()
     as_is_without_translation = llm_chain.run(text=" ")
-
+    t4 = time.time()
+    diff2 = t4-t3
 
     HTMLRepsonse = "<html>"
     HTMLRepsonse += "<table border=5>"
     HTMLRepsonse += "<tr><td>Input</td><td>" + request.form['text'] + "</td></tr>"
     HTMLRepsonse += "<tr><td> english_translation </td><td>" + jsonDict["english_translation"].replace('\n', '<br>') + "</td></tr>"
-    HTMLRepsonse += "<tr><td> as_is_without_translation </td><td>" + as_is_without_translation.replace('\n', '<br>') + "</td></tr>"
-    HTMLRepsonse += "<tr><td> translation </td><td>" + jsonDict2["translation"].replace('\n','<br>') + "</td></tr>"
+    HTMLRepsonse += "<tr><td> as_is_without_translation Time taken in seconds" + str(diff2) + "  </td><td>" + as_is_without_translation.replace('\n', '<br>') + "</td></tr>"
+    HTMLRepsonse += "<tr><td> translation  Time taken in seconds" + str(diff1) + "  </td><td>" + jsonDict2["translation"].replace('\n','<br>') + "</td></tr>"
     HTMLRepsonse += "</table>"
     HTMLRepsonse += "</html>"
 
