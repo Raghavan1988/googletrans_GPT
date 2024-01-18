@@ -1,4 +1,4 @@
-Title: Unlock LLMs for a Billion more Prompt Engineers
+# Unlock LLMs for a Billion more Prompt Engineers
 
 ##update 11/2023
 I presented the findings of this hackathon at DSS Salon SF conference
